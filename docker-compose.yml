@@ -1,0 +1,32 @@
+db_data:
+    image: busybox:latest
+    volumes:
+        - "/var/lib/mysql"
+    container_name: dbdata
+drupal_db:
+    build: container/db
+    ports:
+        - "3306:3306"
+    expose:
+        - "3306"
+    environment:
+        - MYSQL_ROOT_PASSWORD=root
+        - MYSQL_DATABASE=drupal
+    volumes_from:
+        - "dbdata"
+    container_name: db
+drupal_web:
+    build: container/web
+    ports:
+        - "22000:22"
+        - "80:80"
+        - "443:443"
+    links:
+        - db
+        - redis
+    container_name: web
+redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    container_name: redis
